@@ -1,0 +1,95 @@
+In this post, we'll guide you through building a simple large language model using Python. Specifically, we will focus on GPT-2 by OpenAI and BERT (Bidirectional Encoder Representations from Transformers) by Google.
+
+To start, ensure that you have the necessary Python libraries installed. If you don't, you can install them using the following commands:
+
+________________________________
+
+pip install torch
+
+pip install transformers
+
+________________________________
+
+We will use the `transformers` library provided by Hugging Face, which hosts thousands of pretrained models for various natural language processing tasks.
+
+
+
+GPT-2
+
+Let's first start with GPT-2:
+
+________________________________
+
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
+
+# Initialize the GPT2 tokenizer and model
+
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+
+model = GPT2LMHeadModel.from_pretrained("gpt2")
+
+# Define a text prompt
+
+text = "Our Test"
+
+# Encode the input text to tensor
+
+indexed_tokens = tokenizer.encode(text, return_tensors='pt')
+
+# Generate text until the output length (which includes the context length) reaches 50
+
+output_text = model.generate(indexed_tokens, max_length=50, num_beams=5, no_repeat_ngram_size=2, early_stopping=True)
+
+# Decode the output text
+
+output_text_decoded = tokenizer.decode(output_text[0], skip_special_tokens=True)
+
+print(output_text_decoded)
+
+________________________________
+
+This script loads the pretrained GPT-2 model, tokenizes an input prompt, and generates a continuation of the input text.
+
+
+
+BERT
+
+Now, let's see how we can leverage BERT for a classification task:
+
+________________________________
+
+from transformers import BertTokenizer, BertForSequenceClassification
+
+import torch
+
+# Initialize the BERT tokenizer and model
+
+tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
+
+model = BertForSequenceClassification.from_pretrained("bert-base-uncased")
+
+# Define a text prompt
+
+text = "The movie was fantastic!"
+
+# Encode the input text to tensor
+
+inputs = tokenizer(text, return_tensors="pt")
+
+# Classify the text
+
+outputs = model(inputs)
+
+# The model returns the classification scores which are usually passed to a softmax function
+
+# Here, we will just print the raw scores
+
+print(outputs.logits)
+
+________________________________
+
+This script uses a pretrained BERT model to classify the sentiment of a movie review. You can replace "bert-base-uncased" with the model of your choice from the list of pretrained models available on the Hugging Face model hub.
+
+Note: Building large language models from scratch requires vast amounts of data and computational resources. That's why we're using pre-trained models here. However, you can fine-tune these models on your specific text corpus using the `transformers` library's training methods. Finally, be aware that the computational resources required for GPT-3 and especially GPT-4 are significantly greater than for GPT-2.
+
+In conclusion, we've shown how to implement simple tasks with large language models in Python. These models offer wide-ranging capabilities, but always ensure their responsible use to avoid potential misuse in generating misleading information, spam, or offensive content.
